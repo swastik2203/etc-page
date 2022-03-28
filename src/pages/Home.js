@@ -12,20 +12,12 @@ function Home() {
             <button>Signup</button>
         </NavLink>
 
-        <NavLink to="/about">
-              <button>About</button>
+        <NavLink to="/login_page">
+              <button>Login</button>
           </NavLink>
     </div>
   )
 }
 
-function About() {
-    return (
-      <div>
-          <h1>About</h1>
-      </div>
-    )
-  }
 
-
-export {About, Home}
+export default Home;

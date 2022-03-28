@@ -1,8 +1,9 @@
 import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import {About, Home} from './pages/Home';
+import Home from './pages/Home';
 import Signup_page from './components/Signup_page';
+import Login_page from './components/Login_page';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
           <Switch>
             <Route path="/" exact component={Home} />
             <Route path="/signup_page" component={Signup_page} />
-            <Route path="/about" component={About} />
+            <Route path="/login_page" component={Login_page} />
           </Switch>
           {/* <Footer /> */}
         {/* </div> */}

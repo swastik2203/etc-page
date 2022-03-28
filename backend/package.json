@@ -4,7 +4,7 @@
   "description": "",
   "main": "LoginRequest.js",
   "scripts": {
-    "start": "nodemon LoginRequest.js",
+    "start": "nodemon LoginRequest.js --ignore client",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

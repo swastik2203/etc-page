@@ -1,42 +1,71 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useHistory } from "react-router-dom";
+// import axios from "axios";
 
 function Signup_page() {
+  const history = useHistory();
   const [useremailReg, setUseremailReg] = useState("");
   const [passwordReg, setPasswordReg] = useState("");
 
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(false);
+  const [samedataError, setSamedataError] = useState(false);
 
-  const BASE_URL = 'http//localhost:3001/signup'
 
-  const register = (e) => {
+  // const BASE_URL = 'http//localhost:3001/signup'
+
+  const register = async (e) => {
     e.preventDefault();
-    if  (useremailReg === '' || passwordReg === '') {
-    setError(true);
-    } else {
-    setSubmitted(true);
-    setError(false);
-    }
 
-    // fetch("http//localhost:3001/signup", {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //       email: useremailReg,
-    //       password: passwordReg,
-    //     })
-    //   }).then((response)=> {
-    //     console.log(response)
-    //     return response.json();
-    //   });
-      
+    // if  (useremailReg === '' || passwordReg === '') {
+    //   setError(true);
+    //   }
      
-    axios.post(BASE_URL, {
-      useremail: useremailReg,
-      password: passwordReg
-    }).then((response) => {
-      console.log(response);
-    });
+    //   else {
+    //   setSubmitted(true);
+    //   setError(false);
+    //   }
+    
+    const res = await fetch("/signup", {
+        method: "POST",
+        headers:{
+          "Content-Type" :"application/json"
+        },
+        body: JSON.stringify({
+          useremail: useremailReg,
+          password: passwordReg,
+        })
+      });
+      const data = await res.json();
+      
+      if  (useremailReg === '' || passwordReg === '') {
+        setError(true);
+        window.alert("invalid registration");
+        console.log("invalid registration")
+        }
+      else if(res.status === 409 || !data){
+        setSamedataError(true);
+        setSubmitted(false);
+        setError(false);
+        window.alert("invalid registration");
+        console.log("invalid registration")
+      } else{
+        setSubmitted(true);
+        setError(false);
+        window.alert("succesful registration")
+        console.log("successful registration")
+
+        history.push('/');
+
+      }
+   
+     
+    // axios.post(BASE_URL, {
+    //   useremail: useremailReg,
+    //   password: passwordReg
+    // }).then((response) => {
+    //   console.log(response);
+    // });
   };
 
 
@@ -65,6 +94,19 @@ const successMessage = () => {
   </div>
   );
   };
+
+  // Showing samedataerror message if error is true
+  const samedataErrorMessage = () => {
+    return (
+    <div
+    className="samedataerror"
+    style={{
+    display: samedataError ? '' : 'none',
+    }}>
+    <h1>User Already Exists  Please Enter Valid </h1>
+    </div>
+    );
+    };
   
 
   return (
@@ -75,9 +117,10 @@ const successMessage = () => {
         <div className="messages">
         {errorMessage()}
         {successMessage()}
+        {samedataErrorMessage()}
         </div>
 
-        <form >
+        <form method="POST">
           <label for="uemail">
             <b>Username</b>
           </label>

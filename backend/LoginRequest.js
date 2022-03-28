@@ -1,20 +1,18 @@
 
 const express = require('express')
-const bodyParser = require('body-parser')
+// const bodyParser = require('body-parser')
 const mysql = require('mysql2');
-const cors = require('cors');
-const axios = require('axios')
-
-// const { dblClick } = require('@testing-library/user-event/dist/click');
+// const cors = require('cors');
+// const axios = require('axios')
 
 const app = express();
 app.use(express.json());
 
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
 
 
-app.use(cors());
+// app.use(cors());
 // app.use(
 // 	cors({
 // 	origin: ['http://localhost:3000'],
@@ -39,46 +37,44 @@ connection.getConnection(function(error){
 // module.exports = connection;  
 app.post('/signup', (req, res) => {
 	const useremail = req.body.useremail;
-	alert(useremail)
 	const password = req.body.password;
-	const usersData= [];
-
-	
-	//const BASE_URL = 'http//localhost:3001/signup'
-	
-	const getData = () => {
-		axios.get('http//localhost:3001/signup').then(response => {
-		  console.log(response);
-		});
-	  };
-
-	getData()  
-	  
-	
-	// let useremail =usersData[0].useremail
-	// let password = usersData[0].password
 
 	connection.getConnection(async (err, connection) => {
         if (err) throw (err)
-        // const sqlSearch = "SELECT * FROM userinfo WHERE user_name = ? OR user_email = ?"
-        // const searchQuery = mysql.format(sqlSearch, [user_name, user_email])
+        const sqlSearch = "SELECT * FROM etc_stud WHERE email = ? OR password = ?"
+        const searchQuery = mysql.format(sqlSearch, [useremail, password])
         const sqlInsert = "INSERT INTO etc_stud (email,password) VALUES (?,?)"
         const insert_query = mysql.format(sqlInsert, [useremail, password])
         // ? will come from client in order
 
-		connection.query(insert_query, (err, result) => {
-			connection.release();
-			if (err)
-				throw (err);
-			console.log("-------- new user created --------");
-			res.status(201).json({
-				msg: "New User Created",
-				user: {
-					// user_id: result.insertId,
-					user_name: useremail
-				}
-			});
-		})
+
+		 connection.query(searchQuery, async (err, result) => {
+            if (err) throw (err)
+            if (result.length !== 0) {
+                connection.release()
+                console.log("-------- user already exists --------")
+                res.status(409).json({
+                    msg: "User already Exists",
+                });
+            }
+            else {
+                connection.query(insert_query, (err, result) => {
+					connection.release();
+					if (err)
+						throw (err);
+					console.log("-------- new user created --------");
+					res.status(201).json({
+						msg: "New User Created",
+						user: {
+							// user_id: result.insertId,
+							user_email: useremail
+						}
+					});
+				})
+            }
+        })
+
+		
     })
 })
 // app.post("/signup", (req,res) =>{
